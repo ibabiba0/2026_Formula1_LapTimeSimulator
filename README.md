@@ -5,6 +5,7 @@ The objective of this project is to develop a quasi-steady-state (QSS) lap time 
 Given a car and a simple track consisting of basic straights and corners, the initial version of the lap time simulation uses fundamental physics in real motorsports to produce the total lap time and a per-segment breakdown and speed trace.
 
 ### Inputs
+**Car Specs and Natural Constants**
 | Parameter | Value | Units |
 |-----------|-------|-------|
 | Mass | 800 | kg |
@@ -14,7 +15,7 @@ Given a car and a simple track consisting of basic straights and corners, the in
 | Frontal area (A) | 1.5 | m² |
 | Air density (ρ) | 1.225 | kg/m³ |
 
-Track Map:
+**Track Map:**
 | # | Type | Length | Radius | Angle |
 |---|------|--------|--------|-------|
 | 1 | Straight | 1000 m | — | — |
@@ -37,20 +38,23 @@ $$\frac{mv^2}{r} = \mu_{\text{tire grip}}mg$$
   
 $$v = \sqrt{\mu g r}$$
 -  **Drag**
+  
   Drag is the resistive force opposing the car's forward motion. This version maintains a fixed drag coefficient such that the drag scales purely with speed.
 
 $$F_{\text{drag}} = \tfrac{1}{2}\rho C_d A v^2$$
 
 - **Engine Acceleration**
+  
   Based on Newton's second Law:
 
-$a = F/m$:
+$$a = F/m$$
 
   Incorporating the drag force makes net force equal engine force minus drag:
 
 $$F_{\text{drag}} = \tfrac{1}{2}\rho C_d A v^2$$
   
 - **Braking to achieve entry speed at corner**
+  
   With the simple track configuration, it is given that before every corner will be a straight track. The code calculates the maximum allowed speed to meet the target velocity while entering the curve, as mentioned previously. On a straight track, the car is going much faster than the target entry velocity. The code calculates the fastest the car could be going while still being able to decelerate over the remaining distance to meet the target velocity.
 
 ### Outputs

@@ -60,7 +60,7 @@ $$F_{\text{drag}} = \tfrac{1}{2}\rho C_d A v^2$$
 ### Outputs
 - Per-segment: time, exit speed, braking point
 - Total lap time
-- `speed profile` giving (distance, velocity) samples across the lap, ready to plot (as seen in figures/v1)
+- `speed profile` giving (distance, velocity) samples across the lap, ready to plot (as seen in figures/v1_output)
 
 ```Lap Summary:
 Segment 1 | Straight | t=14.284s | Exit Speed=42.2 m/s

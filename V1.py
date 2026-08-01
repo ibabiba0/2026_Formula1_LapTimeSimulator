@@ -1,4 +1,6 @@
 import math
+import os
+import matplotlib.pyplot as plt
 
 #initials
 rho = 1.225             # [kg/m^3]
@@ -30,19 +32,19 @@ track = [
 def drag_force(velocity):
     return 0.5*rho*(velocity**2)*Cd*A
 def corner_speed(radius):
-    return math.sqrt(tiregrip_mu*radius*g0) # from centripetal force = force from tires : mv^2/r = mu*N (tiregrip_mu, friction force from the tire is the only thing pushing it to the center of the circle and centripetal force ALWAYS points toward center)
+    return math.sqrt(tiregrip_mu*radius*g0)
 
 #make functions defining straight vs corner segments
 def simulate_straight(category, entry_speed, target_speed):
     length = category["length"]
-    time = 0 #all these reset with every segment - unique to each segment
+    time = 0
     position = 0
     velocity = entry_speed
     braking = False
     brake_point = None
-    speed_profile = [] #data collection for each segment
+    speed_profile = []
 
-    c = tiregrip_mu * mass * g0 / (0.5 * rho * Cd * A)  # includes drag force
+    c = tiregrip_mu * mass * g0 / (0.5 * rho * Cd * A)
 
     while position < length:
         remaining = length - position
@@ -65,54 +67,58 @@ def simulate_straight(category, entry_speed, target_speed):
         position += dx
         speed_profile.append((position, velocity))
     return velocity, time, brake_point, speed_profile
+
 def simulate_corner(category, entry_speed):
     radius = category["radius"]
     angle = category["angle"]
     speed = corner_speed(radius)
-    length = radius*math.radians(angle) # s = r*theta
+    length = radius*math.radians(angle)
     time = length/speed
-    return speed, time
+    profile = [(0, speed), (length, speed)]
+    return speed, time, profile
 
-#list for storing results
 segment_results, speed_profile = [], []
 
-#main loop
 velocity = 0
 total_time = 0
+lap_distance = 0
 for i in range(len(track)):
     current = track[i]
     if current["type"] == "straight":
         next_segment = track[i+1]
-        target_speed = corner_speed(next_segment["radius"]) #assumes that the next track after a straight is a curve, this is hard coded into the code
+        target_speed = corner_speed(next_segment["radius"])
         velocity, dt, brake_point, segment_profile = simulate_straight(current, velocity, target_speed)
         total_time += dt
-
-        #for quantitative data
-        segment_results.append({
-            'segment': i+1,
-            'type': 'straight',
-            'time': dt, #time will reset after the segment is recorded
-            'exit_speed': velocity,
-            'brake_point': brake_point
-        })
-
-        #for plotting the speed to distance graph
-        speed_profile.extend(segment_profile)
-
+        segment_results.append({'segment': i+1,'type': 'straight','time': dt,'exit_speed': velocity,'brake_point': brake_point})
+        speed_profile.extend((lap_distance + position, velocity) for position, velocity in segment_profile)
+        lap_distance += current["length"]
     elif current["type"] == "corner":
-        velocity, dt = simulate_corner(current, velocity)
+        velocity, dt, segment_profile = simulate_corner(current, velocity)
         total_time += dt
+        segment_results.append({'segment': i+1,'type': 'corner','time': dt,'exit_speed': velocity})
+        speed_profile.extend((lap_distance + position, velocity) for position, velocity in segment_profile)
+        lap_distance += current["radius"] * math.radians(current["angle"])
 
-        segment_results.append({
-            'segment': i+1,
-            'type': 'corner',
-            'time': dt,
-            'exit_speed': velocity
-        })
+distances, speeds = zip(*speed_profile)
+plt.figure(figsize=(12, 5))
+plt.plot(distances, speeds, linewidth=1.3)
+d = 0
+for seg in track:
+    if seg["type"] == "corner":
+        seg_len = seg["radius"] * math.radians(seg["angle"])
+        plt.axvspan(d, d + seg_len, color="grey", alpha=0.15)
+        d += seg_len
+    else:
+        d += seg["length"]
+plt.xlabel("Distance (m)")
+plt.ylabel("Speed (m/s)")
+plt.title(f"Speed vs Distance")
+plt.grid(True, alpha=0.3)
+os.makedirs("figures", exist_ok=True)
+plt.savefig("figures/speed_profile.png", dpi=150, bbox_inches="tight")
+plt.show()
 
-#results output! summary
 print("Lap Summary:")
 for segment in segment_results:
     print(f"Segment {segment['segment']} | {segment['type'].capitalize():8} | t={segment['time']:6.3f}s | Exit Speed={segment['exit_speed']:.1f} m/s")
-
 print(f"\nTotal Lap Time: {total_time:.3f} s")

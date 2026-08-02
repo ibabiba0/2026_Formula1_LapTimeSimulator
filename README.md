@@ -58,10 +58,9 @@ $$F_{\text{drag}} = \tfrac{1}{2}\rho C_d A v^2$$
   With the simple track configuration, it is given that before every corner will be a straight track. The code calculates the maximum allowed speed to meet the target velocity while entering the curve, as mentioned previously. On a straight track, the car is going much faster than the target entry velocity. The code calculates the fastest the car could be going while still being able to decelerate over the remaining distance to meet the target velocity.
 
 ### Outputs
-- Per-segment: time, exit speed, braking point
+- Per-segment: time, exit speed
 - Total lap time
-- `speed profile` giving (distance, velocity) samples across the lap
-- Plot of speed vs distance: as seen in '''figures/v1_output'''
+- Plot of speed vs distance: as seen in ```figures/v1_output```
 
 ```Lap Summary:
 Segment 1 | Straight | t=14.284s | Exit Speed=42.2 m/s
@@ -99,6 +98,10 @@ $$F_L = \frac{1}{2} \rho C_L A v^2$$
 *Notes on c:* The original analytical braking equation assumed a constant braking force. With the addition of downforce into the equation, which varies with velocity, the braking force constant c is now recalculated every simulation step as an approximation.
 
 ### Outputs
+- Per-segment: time, exit speed
+- Total lap time
+- Plot of speed vs distance: as seen in ```figures/v2_output```
+  
 ```Lap Summary:
 Segment 1 | Straight | t=13.213s | Exit Speed=82.8 m/s
 Segment 2 | Corner   | t= 2.304s | Exit Speed=68.2 m/s

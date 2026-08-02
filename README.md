@@ -60,7 +60,8 @@ $$F_{\text{drag}} = \tfrac{1}{2}\rho C_d A v^2$$
 ### Outputs
 - Per-segment: time, exit speed, braking point
 - Total lap time
-- `speed profile` giving (distance, velocity) samples across the lap, ready to plot (as seen in figures/v1_output)
+- `speed profile` giving (distance, velocity) samples across the lap
+- Plot of speed vs distance: as seen in '''figures/v1_output'''
 
 ```Lap Summary:
 Segment 1 | Straight | t=14.284s | Exit Speed=42.2 m/s
@@ -74,3 +75,46 @@ Segment 8 | Corner   | t= 2.896s | Exit Speed=32.5 m/s
 
 Total Lap Time: 51.325 s
 ```
+
+## V2
+Incorporate downforce into the simulation.
+
+### Physics:
+- **Downforce**
+
+Downforce is one of the primary aerodynamic forces acting on a motorvehicle while in motion. Inverted wings and other aerodynamic devices on a car generate a downward force pushing the car into the track. This additional force increases the normal force acting on the tires, allowing them to generate greater frictional forces and therefore achieve higher braking and cornering performance.
+
+The Downforce Equation:
+
+$$F_L = \frac{1}{2} \rho C_L A v^2$$
+
+🤔 **What changes in the code:**
+| Parameter | Previous | with Downforce |
+|-----------|-------|-------|
+| Downforce | — | ```0.5*rho*Cl*A*(velocity**2)``` |
+| Corner Speed | ```math.sqrt(tiregrip_mu * radius * g0)``` | ```math.sqrt((tiregrip_mu * mass * g0)/((mass/radius)-(0.5 * tiregrip_mu * rho * Cl * A)))``` |
+| Braking Force | ```force = -(tiregrip_mu * mass * g0) - drag``` | ``` max_braking_force = (tiregrip_mu * (mass*g0 + downforce(velocity)))``` & ```force = -max_braking_force - drag``` |
+| c | ```c = tiregrip_mu * mass * g0 / (0.5 * rho * Cd * A)``` | ```c = tiregrip_mu * ((mass * g0) + downforce(velocity)) / (0.5 * rho * Cd * A)``` |
+
+*Notes on c:* The original analytical braking equation assumed a constant braking force. With the addition of downforce into the equation, which varies with velocity, the braking force constant c is now recalculated every simulation step as an approximation.
+
+### Outputs
+```Lap Summary:
+Segment 1 | Straight | t=13.213s | Exit Speed=82.8 m/s
+Segment 2 | Corner   | t= 2.304s | Exit Speed=68.2 m/s
+Segment 3 | Straight | t= 5.116s | Exit Speed=61.5 m/s
+Segment 4 | Corner   | t= 4.100s | Exit Speed=30.6 m/s
+Segment 5 | Straight | t= 8.364s | Exit Speed=93.7 m/s
+Segment 6 | Corner   | t= 2.071s | Exit Speed=91.0 m/s
+Segment 7 | Straight | t= 3.093s | Exit Speed=65.7 m/s
+Segment 8 | Corner   | t= 2.294s | Exit Speed=41.1 m/s
+```
+
+Total Lap Time: 40.554 s
+
+**Reflection**
+- The incorporation of downforce physics on the car significantly increased the speed it carried through corners. For instance:
+  - Fastest corner (segment 6) with radius 120 m saw a 97.8% increase in exit speed
+  - Tightest corner (segment 4) with radius 40 m saw a 15% increase; suggests downforce is more valuable in high-speed corners
+  - Total lap time saw a 10.77 s (21%) improvement
+- However, the model utilizes a constant engine force and per-step c approximation, making these results idealized. The next model will incorporate more realistic physics, specifically power-limited acceleration.

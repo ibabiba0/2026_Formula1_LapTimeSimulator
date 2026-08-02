@@ -92,7 +92,7 @@ $$F_L = \frac{1}{2} \rho C_L A v^2$$
 |-----------|-------|-------|
 | Downforce | — | ```0.5*rho*Cl*A*(velocity**2)``` |
 | Corner Speed | ```math.sqrt(tiregrip_mu * radius * g0)``` | ```math.sqrt((tiregrip_mu * mass * g0)/((mass/radius)-(0.5 * tiregrip_mu * rho * Cl * A)))``` |
-| Braking Force | ```force = -(tiregrip_mu * mass * g0) - drag``` | ``` max_braking_force = (tiregrip_mu * (mass*g0 + downforce(velocity)))``` & ```force = -max_braking_force - drag``` |
+| Braking Force | ```force = -(tiregrip_mu * mass * g0) - drag``` | ```max_braking_force = (tiregrip_mu * (mass*g0 + downforce(velocity)))``` & ```force = -max_braking_force - drag``` |
 | c | ```c = tiregrip_mu * mass * g0 / (0.5 * rho * Cd * A)``` | ```c = tiregrip_mu * ((mass * g0) + downforce(velocity)) / (0.5 * rho * Cd * A)``` |
 
 *Notes on c:* The original analytical braking equation assumed a constant braking force. With the addition of downforce into the equation, which varies with velocity, the braking force constant c is now recalculated every simulation step as an approximation.

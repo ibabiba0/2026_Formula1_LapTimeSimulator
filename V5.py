@@ -25,10 +25,10 @@ gear_ratios = [
     1.00,
     0.90]
 final_drive_ratio = 3.60
-shift_time = 0.04       # [s], time with no drive during a gearshift
 
 #steps
 dx = 0.5                # [m]
+shift_time = 0.04       # [s]
 
 #track info, angle measured in degrees
 track = [
@@ -42,7 +42,6 @@ track = [
     {"type": "corner", "radius": 60, "angle": 90}
 ]
 
-#physics functions
 def drag_force(velocity):
     return 0.5*rho*(velocity**2)*Cd*A
 
@@ -62,7 +61,6 @@ def engine_torque(rpm):
     else:
         return 0
 
-#segment simulators
 def simulate_straight(category, entry_speed, target_speed):
     length = category["length"]
     time = 0
@@ -72,8 +70,6 @@ def simulate_straight(category, entry_speed, target_speed):
     brake_point = None
     speed_profile = []
     rpm_profile = []
-
-    # pick a starting gear that suits the entry speed
     gear = 0
     shift_timer = 0.0       # counts down remaining shift time
     wheel_rpm = (entry_speed * 60) / wheel_circumference
@@ -96,23 +92,20 @@ def simulate_straight(category, entry_speed, target_speed):
         if velocity < 1:
             engine_force = traction_limit          # off the line: grip-limited, avoids /0
         else:
-            # drivetrain: vehicle speed -> wheel rpm -> engine rpm
             wheel_rpm = (velocity * 60) / wheel_circumference
             engine_rpm = wheel_rpm * gear_ratios[gear] * final_drive_ratio
 
-            # shift up at redline - starts the shift timer
             if engine_rpm >= redline and gear < len(gear_ratios) - 1 and shift_timer <= 0:
                 gear += 1
                 engine_rpm = wheel_rpm * gear_ratios[gear] * final_drive_ratio
                 shift_timer = shift_time
 
-            # engine model: rpm -> torque -> wheel torque -> force
             if shift_timer > 0:
-                engine_force = 0.0          # clutch out mid-shift, no drive
+                engine_force = 0.0
             else:
                 torque = engine_torque(engine_rpm)
                 wheel_torque = torque * gear_ratios[gear] * final_drive_ratio
-                engine_force = min(traction_limit, wheel_torque / wheel_radius)
+                engine_force = min(traction_limit, wheel_torque / wheel_radius) # engine_force = wheel_torque/wheel_radius
 
             rpm_profile.append((position, engine_rpm, gear))
 

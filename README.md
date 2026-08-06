@@ -141,3 +141,22 @@ Segment 8 | Corner   | t= 2.294s | Exit Speed=41.1 m/s
 
 Total Lap Time: 41.251 s
 ```
+
+### V4
+
+### Outputs
+```
+Lap Summary:
+Segment 1 | Straight | t=13.330s | Exit Speed=75.3 m/s
+Segment 2 | Corner   | t= 2.304s | Exit Speed=68.2 m/s
+Segment 3 | Straight | t= 5.454s | Exit Speed=55.0 m/s
+Segment 4 | Corner   | t= 4.100s | Exit Speed=30.6 m/s
+Segment 5 | Straight | t= 8.419s | Exit Speed=91.5 m/s
+Segment 6 | Corner   | t= 2.071s | Exit Speed=91.0 m/s
+Segment 7 | Straight | t= 3.277s | Exit Speed=60.5 m/s
+Segment 8 | Corner   | t= 2.294s | Exit Speed=41.1 m/s
+
+Total Lap Time: 41.251 s
+```
+
+identical to v3, v4 serves as a test where gears serve as an instrumentation layer turning vehicle speed into engine speed, verify the numbers are sane, then make force depend on rpm via torque

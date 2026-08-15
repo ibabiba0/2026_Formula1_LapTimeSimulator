@@ -177,3 +177,26 @@ Segment 8 | Corner   | t= 2.294s | Exit Speed=41.1 m/s
 
 Total Lap Time: 44.924 s
 ```
+
+### V6
+
+### Outputs
+```
+Corner speeds:
+  R=100 m -> 57.6 m/s
+  R= 40 m -> 29.3 m/s
+  R=120 m -> 69.2 m/s
+  R= 60 m -> 38.3 m/s
+
+Lap Summary:
+Segment 1 | Straight | t=15.071s | Exit Speed=58.0 m/s
+Segment 2 | Corner   | t= 2.725s | Exit Speed=57.6 m/s
+Segment 3 | Straight | t= 6.817s | Exit Speed=29.6 m/s
+Segment 4 | Corner   | t= 4.290s | Exit Speed=29.3 m/s
+Segment 5 | Straight | t= 9.650s | Exit Speed=69.4 m/s
+Segment 6 | Corner   | t= 2.725s | Exit Speed=69.2 m/s
+Segment 7 | Straight | t= 4.317s | Exit Speed=38.8 m/s
+Segment 8 | Corner   | t= 2.461s | Exit Speed=38.3 m/s
+
+Total Lap Time: 48.056 s
+```
